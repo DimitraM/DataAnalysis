@@ -1,0 +1,26 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Import data
+df = pd.read_csv('medical_examination.csv')
+
+# Add 'overweight' column
+sqr_height = (df['height'] / 100)**2 #heigth in meters
+df['overweight'] = df['weight']/sqr_height
+df['overweight'] = df['overweight'].apply(lambda bmi: 1 if bmi > 25 else 0)#if value is over 25
+#then get value 1 else get value 0 and apply to overweight column
+# print(df['cholesterol'],df['gluc'])
+for index,row in df.iterrows():
+    if row['cholesterol']==1 or row['gluc']==1:
+        df.at[index,'cholesterol']=df.at[index,'gluc'] = 0
+    elif row['cholesterol']>1 or row['gluc']>1:
+        df.at[index,'cholesterol']=df.at[index,'gluc'] = 1
+    else:
+        print("ValueError")
+#convert only the column weightas it is the only one with type float
+df = df.astype({'weight': 'int64'})
+# print(df.dtypes)
+sns.catplot(data=df, x={'active','alco','cholesterol','gluc', 'overweight' , 'smoke'} , y=None, kind ="strip" , col= "cardio")
+plt.show()
